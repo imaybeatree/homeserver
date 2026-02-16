@@ -1,0 +1,61 @@
+import { authenticated } from "./request.handlers";
+import { tmdbApi } from "./api.handlers";
+
+export const fetchMovieHandler = authenticated(async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const response = await fetch(`https://vidsrc.icu/embed/movie/${id}`);
+    let html = await response.text();
+
+    html = html.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "");
+
+    res.send(html);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Failed to fetch data" });
+  }
+})
+
+export const searchMoviesHandler = authenticated(async (req, res) => {
+  const { name, page } = req.params;
+
+  try {
+    const url = `search/movie?query=${name}&include_adult=false&language=en-US&page=${page}`;
+    const response = await tmdbApi(url);
+    const data = await response.json();
+    res.json(data);
+
+    
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch data" });
+  }
+})
+
+export const popularMoviesHandler = authenticated(async (req, res) => {
+
+  try {
+    const url = `movie/popular?language=en-US&page=1`;
+    const response = await tmdbApi(url);
+    const data = await response.json();
+    res.json(data);
+
+
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch data" });
+  }
+})
+
+export const movieGenresHandler = authenticated(async (req, res) => {
+
+  try {
+    const url = `genre/movie/list`;
+    const response = await tmdbApi(url);
+    const data = await response.json();
+    res.json(data);
+
+
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch data" });
+  }
+})

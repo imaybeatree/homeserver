@@ -1,0 +1,16 @@
+{
+  "devDependencies": {
+    "@types/node": "^24.9.1",
+    "concurrently": "^9.2.1"
+  },
+  "scripts": {
+    "start": "concurrently \"npm run dev --prefix homeapp\" \"npm run dev --prefix backend\"",
+    "docker:build": "docker build -t home-app .",
+    "docker:run": "docker run -p 3000:3000 -p 5173:5173 home-app",
+    "docker": "npm run docker:build && npm run docker:run"
+    
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3"
+  }
+}
