@@ -78,23 +78,22 @@ const MainPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950">
+    <div className="app-shell">
       {/* Header with Search Bar */}
-      <div className="bg-neutral-800 p-8 shadow-lg">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex gap-3">
+      <div className="top-bar">
+        <div className="top-bar-inner">
+          <div className="toolbar-row">
             <Input
               type="text"
               value={searchQuery}
               onChange={(e) => handleInputChange(e.target.value)}
               onKeyDown={handleKeyPress}
               placeholder="Start typing to search"
-              className="rounded-full"
             />
             <Select value={mediaType} onValueChange={(val) => {setMediaType(val)
             if (searchQuery.length != 0) {setHasSearched(true)}
               }}>
-              <SelectTrigger className="w-36 rounded-full">
+              <SelectTrigger>
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
               <SelectContent>
@@ -109,28 +108,28 @@ const MainPage: React.FC = () => {
       </div>
 
       {/* Results Section */}
-      <div className="mx-auto max-w-7xl p-8">
+      <div className="page-wrap">
 
         {isLoading && (
-          <div className="flex justify-center py-20">
-            <Spinner className="size-8"/>
+          <div className="center-panel">
+            <Spinner />
           </div>
         )}
 
         {!isLoading && hasSearched && media.length === 0 && searchQuery.length != 0 && (
-          <div className="py-20 text-center text-gray-400">
-            <p className="text-xl">No results found for "{searchQuery}"</p>
+          <div className="center-panel muted-text">
+            <p>No results found for "{searchQuery}"</p>
           </div>
         )}
 
         {!isLoading && media.length > 0 && (
           <>
-            <div className="mb-6 text-gray-400">
+            <div className="results-meta">
               Showing {media.length} results{' '}
               {totalPages > 1 && `(Page ${currentPage} of ${totalPages})`}
             </div>
 
-            <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            <div className="poster-grid" style={{ marginTop: 24 }}>
               {media.map((item) => (
                 <PosterCard key={item.id} media={item} onClick={handleMediaClick} />
               ))}
@@ -138,19 +137,19 @@ const MainPage: React.FC = () => {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <Pagination className="mt-8">
+              <Pagination>
                 <PaginationContent>
                   <PaginationItem>
                     <PaginationPrevious
                       onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
-                      className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                      className={currentPage === 1 ? 'disabled-link' : ''}
                     />
                   </PaginationItem>
 
                   {currentPage > 2 && (
                     <>
                       <PaginationItem>
-                        <PaginationLink onClick={() => handlePageChange(1)} className="cursor-pointer">
+                        <PaginationLink onClick={() => handlePageChange(1)}>
                           1
                         </PaginationLink>
                       </PaginationItem>
@@ -166,7 +165,6 @@ const MainPage: React.FC = () => {
                     <PaginationItem>
                       <PaginationLink
                         onClick={() => handlePageChange(currentPage - 1)}
-                        className="cursor-pointer"
                       >
                         {currentPage - 1}
                       </PaginationLink>
@@ -181,7 +179,6 @@ const MainPage: React.FC = () => {
                     <PaginationItem>
                       <PaginationLink
                         onClick={() => handlePageChange(currentPage + 1)}
-                        className="cursor-pointer"
                       >
                         {currentPage + 1}
                       </PaginationLink>
@@ -209,7 +206,7 @@ const MainPage: React.FC = () => {
                   <PaginationItem>
                     <PaginationNext
                       onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
-                      className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                      className={currentPage === totalPages ? 'disabled-link' : ''}
                     />
                   </PaginationItem>
                 </PaginationContent>
@@ -221,21 +218,21 @@ const MainPage: React.FC = () => {
         {/* Show Popular Movies if Not Searching */}
         {!hasSearched && !isLoading && (
           <div>
-          <div className="py-10 text-gray-400">
-            <div className="text-2xl font-bold text-white translate-x-1/50 mb-3">Popular Movies</div>
+          <div className="section muted-text">
+            <div className="section-title">Popular Movies</div>
             {popMoviesLoading ? (
-            <div className="flex items-center justify-center min-h-[400px]">
-              <Spinner className="size-8"/>
+            <div className="center-panel">
+              <Spinner />
             </div>
           ) : (
             <PopularShows media={popularMovies} handleMovieClick={handleMediaClick} />
           )}
           </div>
-          <div className="py-10 text-gray-400">
-            <div className="text-2xl font-bold text-white translate-x-1/50 mb-3">Popular Shows</div>
+          <div className="section muted-text">
+            <div className="section-title">Popular Shows</div>
           {popShowsLoading ? (
-            <div className="flex items-center justify-center min-h-[400px]">
-              <Spinner className="size-8"/>
+            <div className="center-panel">
+              <Spinner />
             </div>
           ) : (
             <PopularShows media={popularShows} handleMovieClick={handleMediaClick} />
@@ -251,8 +248,8 @@ const MainPage: React.FC = () => {
             if (!open) setSelectedMedia(null);
           }}
         >
-          <DialogOverlay className="bg-black/80" />
-          <DialogContent className="md:!w-1/3 md:!max-w-none max-h-[95vh] bg-gray-900 my-4 max-w-4xl m-0 p-0 rounded-none">
+          <DialogOverlay />
+          <DialogContent>
             <ItemDetails media={selectedMedia} />
           </DialogContent>
         </Dialog>

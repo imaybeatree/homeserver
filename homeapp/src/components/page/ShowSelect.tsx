@@ -30,18 +30,18 @@ export const ShowSelect: React.FC<ShowSelectProps> = ({
     : [];
 
   return (
-    <div className="w-full max-w h-full">
-      <div className="flex items-center justify-between mb-4 p-2">
-        <h2 className="text-2xl font-bold text-white">Episodes</h2>
+    <div>
+      <div className="episode-head">
+        <h2 className="episode-title">Episodes</h2>
         <Select value={season} onValueChange={onSeasonChange}>
-          <SelectTrigger className="w-36 rounded-full">
+          <SelectTrigger>
             <SelectValue placeholder="Select Season" />
           </SelectTrigger>
-          <SelectContent className="max-h-60 rounded-2xl bg-neutral-800">
+          <SelectContent>
             <SelectGroup>
               {seasonsTotal.map((seasonNum) => (
                 <SelectItem key={seasonNum} value={seasonNum.toString()}
-                className="data-[state=checked]:bg-slate-200 data-[state=checked]:text-black rounded-xs">
+                >
                   Season {seasonNum}
                 </SelectItem>
               ))}
@@ -50,14 +50,14 @@ export const ShowSelect: React.FC<ShowSelectProps> = ({
         </Select>
       </div>
       
-      <ScrollArea className="h-[calc(100vw*0.9-4rem)] lg:h-[calc((100vw-24rem-6rem)*0.31)] w-full border border-slate-200 rounded-2xl bg-neutral-950 shadow-lg">
-        <div className="p-4">
+      <ScrollArea className="episode-scroll">
+        <div className="episode-scroll-inner">
           {loading ? (
-            <div className="text-white text-center items-center gap-1 flex"> <Spinner className="size-5"/>Loading episodes</div>
+            <div className="muted-text"><Spinner className="spinner-sm"/>Loading episodes</div>
           ) : error ? (
-            <div className="text-red-500 text-center">{error}</div>
+            <div className="error-box">{error}</div>
           ) : episodes.length === 0 ? (
-            <div className="text-white text-center">No episodes found</div>
+            <div className="muted-text">No episodes found</div>
           ) : (
             episodes.map((episodeName, index) => {
               const episodeNumber = (index + 1).toString();
@@ -65,14 +65,10 @@ export const ShowSelect: React.FC<ShowSelectProps> = ({
               return (
                 <div key={index}>
                   <Button
-                    className={`w-full text-left justify-start rounded-lg shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] ${
-                      isSelected 
-                        ? 'bg-gradient-to-r from-neutral-800 to-neutral-900 text-white font-semibold' 
-                        : 'bg-gradient-to-r  text-white'
-                    }`}
+                    className={`episode-button ${isSelected ? 'episode-button-active' : ''}`}
                     onClick={() => onEpisodeChange(episodeNumber)}
                   >
-                    <span className="font-medium">
+                    <span>
                       {index + 1}. {episodeName}
                     </span>
                   </Button>

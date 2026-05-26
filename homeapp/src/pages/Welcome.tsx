@@ -95,11 +95,11 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onAuthenticated }) => {
   };
 
   return (
-    <div className="relative min-h-screen background flex items-center justify-center p-4 overflow-hidden">
+    <div className="welcome">
       {balls.map(ball => (
         <div
           key={ball.id}
-          className="absolute rounded-full pointer-events-none opacity-30 transition-all duration-[16ms] linear"
+          className="welcome-ball"
           style={{
             left: `${ball.x}px`,
             top: `${ball.y}px`,
@@ -110,18 +110,16 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onAuthenticated }) => {
         />
       ))}
 
-      <div className="max-w-md w-full relative z-10">
-        <Card className="shadow-2xl">
-          <CardHeader className="text-center space-y-4">
-            <div className="flex justify-center">
-              <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-4 rounded-full">
-                <Sparkles className="w-12 h-12 text-white" />
+      <div className="welcome-panel">
+        <Card>
+          <CardHeader>
+            <div className="welcome-icon">
+                <Sparkles />
               </div>
-            </div>
-            <CardTitle className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <CardTitle className="welcome-title">
               Ni Hao
             </CardTitle>
-            <CardDescription className="text-base">
+            <CardDescription className="welcome-desc">
               {!submitted 
                 ? "Type the ting"
                 : "donezos"}
@@ -130,7 +128,7 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onAuthenticated }) => {
           
           <CardContent>
             {!submitted ? (
-              <div className="space-y-4">
+              <div className="form-stack">
                 {/* <div className="space-y-2">
                   <Label>Name</Label>
                   <Input
@@ -143,7 +141,7 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onAuthenticated }) => {
                   />
                 </div> */}
                 
-                <div className="space-y-2">
+                <div>
                   <Label>The ting</Label>
                   <Input
                     id="password"
@@ -156,7 +154,7 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onAuthenticated }) => {
                 </div>
                 
                 {error && (
-                  <div className="text-sm text-red-500 bg-red-50 p-3 rounded-md">
+                  <div className="error-box">
                     {error}
                   </div>
                 )}
@@ -164,11 +162,11 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onAuthenticated }) => {
                 <Button
                   onClick={handleSubmit}
                   disabled={!password.trim()}
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                  className="tv-button-wide"
                 >
-                  <Lock className="w-4 h-4 mr-2" />
+                  <Lock />
                   Sign In
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  <ArrowRight />
                 </Button>
 
               </div>
@@ -176,7 +174,7 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onAuthenticated }) => {
           </CardContent>
         </Card>
         
-        <p className="text-center text-white mt-6 text-sm">
+        <p className="welcome-note">
           yea i vibe coded the balls xd
         </p>
       </div>

@@ -1,11 +1,17 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import legacy from '@vitejs/plugin-legacy'
 import path from "path"
-import tailwindcss from "@tailwindcss/vite"
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+    legacy({
+      targets: ["Chrome >= 47"],
+      modernPolyfills: false,
+    }),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -18,17 +24,13 @@ export default defineConfig({
   },
   base: "/",
   build: {
-    target: "es2015",      // Even lower target for Tizen 3.5 (Chrome 47-era)
     modulePreload: false,  // Good - Tizen breaks on this
-    cssTarget: "chrome61", // Lowest Vite supports
+    cssTarget: "chrome61",
     minify: 'terser',      // Use terser for better ES5 compatibility
     rollupOptions: {
       output: {
         manualChunks: undefined, // Single chunk is more reliable on Tizen
       },
     },
-  },
-  css: {
-    transformer: 'lightningcss', // Try lightningcss if postcss doesn't work
   },
 })

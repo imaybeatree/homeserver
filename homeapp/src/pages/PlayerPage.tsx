@@ -46,21 +46,20 @@ const PlayerPage: React.FC<PlayerPageProps> = ({ id, type, season: initialSeason
   `;
 
   return (
-    <div className="min-h-screen bg-neutral-950 overflow-x-hidden">
+    <div className="player-shell">
       {/* Header with Back Button */}
-      <div className="bg-neutral-900 p-4 shadow-lg">
-        <div className="mx-auto max-w-7xl flex items-center gap-4">
+      <div className="top-bar">
+        <div className="top-bar-inner toolbar-row">
           <Button
             variant="ghost"
             onClick={handleBack}
-            className="flex items-center gap-2"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft />
             Back
           </Button>
-          <h1 className="text-xl font-semibold text-white">Now Playing on</h1>
+          <h1 className="section-title" style={{ margin: 0 }}>Now Playing on</h1>
           <Select value={source} onValueChange={(val) => {setSource(val)}}>
-                <SelectTrigger className="w-36 rounded-full">
+                <SelectTrigger>
                 <SelectValue placeholder="Select source" />
               </SelectTrigger>
               <SelectContent>
@@ -74,30 +73,31 @@ const PlayerPage: React.FC<PlayerPageProps> = ({ id, type, season: initialSeason
       </div>
 
       {/* Player and ShowSelect*/}
-      <div className="mx-auto mt-4 md:max-w-8/12 md:p-8 md:mt-0">
-        <div className="flex flex-col lg:flex-row gap-6">
+      <div className="player-layout">
+        <div className="player-row">
 
 
           {/* Player Container */}
-        <div className="flex-1 flex justify-center lg:order-2">
+        <div className="player-main">
           {loading && (
-            <div className="flex justify-center items-center py-20 relative rounded-lg shadow-2xl w-full aspect-video">
-              <Spinner className="size-10"/>
+            <div className="player-frame">
+              <div className="player-frame-content" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Spinner className="spinner-lg"/>
+              </div>
             </div>
           )}
 
           {error && (
-            <div className="rounded-lg bg-red-500/20 border border-red-500 p-4 text-red-200 text-center">
+            <div className="error-player">
               {error}
             </div>
           )}
 
           {!loading && !error && playerHtml && (
-            <div className="relative bg-black rounded-lg overflow-hidden shadow-2xl w-full aspect-video">
+            <div className="player-frame">
               {source === "main" ?  (
 
                  <iframe
-                  className="absolute inset-0 w-full h-full"
                   srcDoc={wrappedHtml}
                   allowFullScreen
                   style={{ border: "none" }}
@@ -106,7 +106,6 @@ const PlayerPage: React.FC<PlayerPageProps> = ({ id, type, season: initialSeason
               ):
               (
                 <iframe
-                  className="absolute inset-0 w-full h-full"
                   src={playerHtml}
                   allowFullScreen
                   style={{ border: "none" }}
@@ -119,7 +118,7 @@ const PlayerPage: React.FC<PlayerPageProps> = ({ id, type, season: initialSeason
         </div>
 
            {/* ShowSelect Component */}
-          {isShow && (<div className="w-full max-h-128 lg:w-96 lg:order-1">
+          {isShow && (<div className="episode-panel">
             <ShowSelect 
               id={id} 
               season={season}

@@ -14,7 +14,7 @@ export const PopularShows: React.FC<PopularShowsProps> = ({ media, handleMovieCl
     const isMobile = useIsMobile()
 
     if (!media || media.length === 0) {
-    return <p className="text-gray-400 text-center">No popular shows available.</p>;
+    return <p className="muted-text" style={{ textAlign: "center" }}>No popular shows available.</p>;
     }
     
     return(
@@ -22,13 +22,12 @@ export const PopularShows: React.FC<PopularShowsProps> = ({ media, handleMovieCl
               opts={{
                 align: "start",
               }}
-              className="w-full"
             >
-              <CarouselContent className="-ml-2">
+              <CarouselContent>
                 {media.map((media) => (
-                  <CarouselItem key={media.id} className="basis-[45%] md:basis-1/3 lg:basis-1/4 pl-2">
+                  <CarouselItem key={media.id}>
                     <div>
-                        <CardContent className="flex items-center justify-center md:!px-6 !px-1">
+                        <CardContent className="carousel-card-pad">
                             <PosterCard 
                               key={media.id}
                               media={media}

@@ -30,41 +30,41 @@ export const PosterCard: React.FC<PosterCardProps> = ({ media, onClick }) => {
   return (
     <div 
       onClick={handleClick}
-      className="group relative cursor-pointer overflow-hidden rounded-2xl shadow-lg transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-3xl active:scale-95"
+      className="poster-card"
+      tabIndex={0}
+      onKeyDown={(event) => {
+        if (event.key === "Enter") handleClick();
+      }}
     >
       {/* Poster Image */}
-      <div className="relative overflow-hidden bg-gray-800">
+      <div className="poster-image-wrap">
         <img 
           src={posterUrl}
           alt={media.media_type === "movie" ? media.title : media.name}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+          className="poster-image"
         />
         
         {/* Overlay that appears on hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-          <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-            <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-              <div className="flex flex-wrap gap-1">
+        <div className="poster-overlay">
+              <div className="genre-list">
                 {genres.map((name) => (
                   <span
                     key={name}
-                    className="border-2 text-white text-xs font-semibold px-2 py-1 rounded-2xl"
+                    className="genre-pill"
                   >
                     {name}
                   </span>
                 ))}
               </div>
-            </div>
-          </div>
         </div>
 
       </div>
 
-      <div className="bg-gray-900 p-4 text-center">
-        <h3 className="md:text-lg text-sm font-semibold text-white line-clamp-1 group-hover:text-yellow-500 transition-colors">
+      <div className="poster-info">
+        <h3 className="poster-title">
           {media.media_type === "movie" ? media.title : media.name}
         </h3>
-        <p className="text-sm text-gray-400">{year}</p>
+        <p className="poster-year">{year}</p>
       </div>
     </div>
   );
