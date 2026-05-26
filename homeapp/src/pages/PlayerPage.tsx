@@ -36,7 +36,14 @@ const PlayerPage: React.FC<PlayerPageProps> = ({ id, type, season: initialSeason
     setEpisode("1")
   }
 
-  
+  const wrappedHtml = `
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 100%; height: 100%; overflow: hidden; background: black; }
+      #the_frame { width: 100%; height: 100%; }
+    </style>
+    ${playerHtml}
+  `;
 
   return (
     <div className="min-h-screen bg-neutral-950 overflow-x-hidden">
@@ -91,7 +98,7 @@ const PlayerPage: React.FC<PlayerPageProps> = ({ id, type, season: initialSeason
 
                  <iframe
                   className="absolute inset-0 w-full h-full"
-                  srcDoc={playerHtml}
+                  srcDoc={wrappedHtml}
                   allowFullScreen
                   style={{ border: "none" }}
                   scrolling="no"

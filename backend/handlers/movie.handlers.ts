@@ -5,14 +5,14 @@ export const fetchMovieHandler = authenticated(async (req, res) => {
   const { id } = req.params;
 
   try {
-    const response = await fetch(`https://vidsrc.icu/embed/movie/${id}`);
+    const response = await fetch(`https://vidsrcme.ru/embed/movie/${id}`);
     let html = await response.text();
 
     html = html.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "");
 
     res.send(html);
   } catch (error) {
-    console.log(error);
+    console.error("Failed to fetch movie embed:", error);
     res.status(500).json({ error: "Failed to fetch data" });
   }
 })
@@ -28,6 +28,7 @@ export const searchMoviesHandler = authenticated(async (req, res) => {
 
     
   } catch (error) {
+    console.error("Failed to search movies:", error);
     res.status(500).json({ error: "Failed to fetch data" });
   }
 })
@@ -42,6 +43,7 @@ export const popularMoviesHandler = authenticated(async (req, res) => {
 
 
   } catch (error) {
+    console.error("Failed to fetch popular movies:", error);
     res.status(500).json({ error: "Failed to fetch data" });
   }
 })
@@ -56,6 +58,7 @@ export const movieGenresHandler = authenticated(async (req, res) => {
 
 
   } catch (error) {
+    console.error("Failed to fetch movie genres:", error);
     res.status(500).json({ error: "Failed to fetch data" });
   }
 })

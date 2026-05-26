@@ -5,14 +5,14 @@ export const fetchTvShowHandler = authenticated(async (req, res) => {
   const { id, season, episode } = req.params;
 
   try {
-    const response = await fetch(`https://vidsrc.icu/embed/tv/${id}/${season}/${episode}`);
+    const response = await fetch(`https://vidsrcme.ru/embed/tv/${id}/${season}/${episode}`);
     let html = await response.text();
 
     html = html.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "");
 
     res.send(html);
   } catch (error) {
-    console.log(error);
+    console.error("Failed to fetch TV show embed:", error);
     res.status(500).json({ error: "Failed to fetch data" });
   }
 })
@@ -26,16 +26,14 @@ export const searchTvShowsHandler = authenticated(async (req, res) => {
     const data = await response.json();
     res.json(data);
 
-    
+	    
   } catch (error) {
+    console.error("Failed to search TV shows:", error);
     res.status(500).json({ error: "Failed to fetch data" });
   }
 })
 
 export const popularTvShowsHandler = authenticated(async (req, res) => {
-
-  console.log("Fetching popular Tv Shows")
-
   try {
     const url = `tv/popular?language=en-US&page=1`;
     const response = await tmdbApi(url);
@@ -43,6 +41,7 @@ export const popularTvShowsHandler = authenticated(async (req, res) => {
     res.json(data);
 
   } catch (error) {
+    console.error("Failed to fetch popular TV shows:", error);
     res.status(500).json({ error: "Failed to fetch data" });
   }
 
@@ -58,6 +57,7 @@ export const tvGenresHandler = authenticated(async (req, res) => {
 
 
   } catch (error) {
+    console.error("Failed to fetch TV genres:", error);
     res.status(500).json({ error: "Failed to fetch data" });
   }
 })
@@ -73,6 +73,7 @@ export const tvDetailsHandler = authenticated(async (req, res) => {
     res.json(data);
 
   } catch (error) {
+    console.error("Failed to fetch TV details:", error);
     res.status(500).json({ error: "Failed to fetch data" });
   }
 })
@@ -87,13 +88,14 @@ export const tvEpisodeHandler = authenticated(async (req, res) => {
     res.json(data);
 
   } catch (error) {
+    console.error("Failed to fetch TV episode:", error);
     res.status(500).json({ error: "Failed to fetch data" });
   }
 })
 
 export const tvEpisodesHandler = authenticated(async (req, res) => {
   const { id, season } = req.params;
-console.log(`Getting episodes for ${id} season ${season}`)
+
   try {
     const url = `tv/${id}/season/${season}`;
     const response = await tmdbApi(url);
@@ -102,6 +104,7 @@ console.log(`Getting episodes for ${id} season ${season}`)
     res.json(result);
 
   } catch (error) {
+    console.error("Failed to fetch TV episodes:", error);
     res.status(500).json({ error: "Failed to fetch data" });
   }
 })

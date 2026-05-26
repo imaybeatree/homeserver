@@ -7,7 +7,13 @@ import { fetchTvShowHandler, popularTvShowsHandler, searchTvShowsHandler, tvDeta
 import { networkInterfaces } from 'os';
 
 function getLocalIpAddress(): string {
-  const nets = networkInterfaces();
+  let nets: ReturnType<typeof networkInterfaces>;
+
+  try {
+    nets = networkInterfaces();
+  } catch {
+    return 'localhost';
+  }
   
   for (const name of Object.keys(nets)) {
     for (const net of nets[name]!) {
@@ -32,8 +38,10 @@ const IP = getLocalIpAddress();
 // app.use("/files", express.static(FILE_DIR));
 // app.use("/files", express.static(FILE_DIR));
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running at http://${IP}:${PORT}/`);
+const server = app.listen(PORT, '0.0.0.0');
+
+server.on("error", (error) => {
+  console.error("Failed to start server:", error);
 });
 
 app.use(cors({
@@ -58,3 +66,10 @@ app.get("/api/genre/tv", tvGenresHandler)
 app.get("/api/details/tv/:id",tvDetailsHandler)
 app.get("/api/episode/:id/:season/:episode", tvEpisodeHandler)
 app.get("/api/episodes/:id/:season", tvEpisodesHandler)
+
+const WEB_DIST = path.resolve(__dirname, "../../homeapp/dist");
+
+app.use(express.static(WEB_DIST));
+app.get(/^(?!\/api).*/, (_req, res) => {
+  res.sendFile(path.join(WEB_DIST, "index.html"));
+});
