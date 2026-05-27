@@ -1,7 +1,9 @@
 import React, {  useState } from 'react';
+import { LogOut } from 'lucide-react';
 import PosterCard from '@/components/page/PosterCard';
 import ItemDetails from '@/components/page/ItemDetails';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import {
   Pagination,
   PaginationContent,
@@ -21,8 +23,12 @@ import type { Media} from '@/components/page/types';
 import { PopularShows } from '@/components/page/PopularShows';
 import { useSearchMedia, useSearchPopular } from '@/hooks/use-media';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { getCurrentUser, useSavedShows } from '@/hooks/use-saved-shows';
+import { useNavigate } from 'react-router-dom';
 
 const MainPage: React.FC = () => {
+  const navigate = useNavigate();
+  const [currentUser] = useState(getCurrentUser());
   const [searchQuery, setSearchQuery] = useState('');
   const [mediaType, setMediaType] = useState<string>('movie')
   const [selectedMedia, setSelectedMedia] = useState<Media | null>(null);
@@ -36,6 +42,11 @@ const MainPage: React.FC = () => {
   //Fetch popular movies (only once)
   const {  popular: popularShows, isLoading: popShowsLoading }= useSearchPopular('tv')
   const {  popular: popularMovies, isLoading: popMoviesLoading }= useSearchPopular('movie')
+  const {
+    error: savedShowsError,
+    isLoading: savedShowsLoading,
+    savedShows,
+  } = useSavedShows(currentUser);
 
   //Handle search input with debounce
   const handleInputChange = (value: string) => {
@@ -77,11 +88,27 @@ const MainPage: React.FC = () => {
     setSelectedMedia(media);
   };
 
+  const handleSwitchUser = () => {
+    sessionStorage.removeItem('isAuthenticated');
+    sessionStorage.removeItem('currentUser');
+    navigate('/');
+  };
+
   return (
     <div className="app-shell">
       {/* Header with Search Bar */}
       <div className="top-bar">
         <div className="top-bar-inner">
+          <div className="user-bar">
+            <div>
+              <div className="user-bar-label">Watching as</div>
+              <div className="user-bar-name">{currentUser}</div>
+            </div>
+            <Button className="tv-button-ghost user-switch-button" onClick={handleSwitchUser}>
+              <LogOut />
+              Switch
+            </Button>
+          </div>
           <div className="toolbar-row">
             <Input
               type="text"
@@ -218,6 +245,20 @@ const MainPage: React.FC = () => {
         {/* Show Popular Movies if Not Searching */}
         {!hasSearched && !isLoading && (
           <div>
+          <div className="section muted-text">
+            <div className="section-title">{currentUser}'s Saved Shows</div>
+            {savedShowsLoading ? (
+            <div className="center-panel">
+              <Spinner />
+            </div>
+          ) : savedShowsError ? (
+            <div className="empty-saved">{savedShowsError}</div>
+          ) : savedShows.length > 0 ? (
+            <PopularShows media={savedShows} handleMovieClick={handleMediaClick} />
+          ) : (
+            <div className="empty-saved">Save movies and TV shows to see them here.</div>
+          )}
+          </div>
           <div className="section muted-text">
             <div className="section-title">Popular Movies</div>
             {popMoviesLoading ? (

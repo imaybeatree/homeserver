@@ -78,6 +78,56 @@ img {
   margin-left: 12px;
 }
 
+.user-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.user-bar-label {
+  color: #9ca3af;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.user-bar-name {
+  color: #fff;
+  font-size: 24px;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.user-switch-button {
+  width: auto;
+  min-width: 112px;
+}
+
+.player-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.player-title {
+  margin: 0;
+}
+
+.save-player-button {
+  margin-left: auto;
+  min-width: 112px;
+  background: #fbbf24;
+  color: #111827;
+}
+
+.player-save-error {
+  margin-top: 12px;
+  color: #fecaca;
+  font-size: 14px;
+}
+
 .tv-input {
   width: 100%;
   min-width: 0;
@@ -616,6 +666,40 @@ img {
   margin-top: 16px;
 }
 
+.user-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.user-choice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #f8fafc;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.user-choice svg {
+  width: 18px;
+  height: 18px;
+}
+
+.user-choice:hover,
+.user-choice:focus,
+.user-choice-active {
+  border-color: #fbbf24;
+  background: #1f2937;
+  outline: none;
+}
+
 .error-box {
   border-radius: 8px;
   background: #fee2e2;
@@ -629,6 +713,14 @@ img {
   color: #fff;
   text-align: center;
   font-size: 14px;
+}
+
+.empty-saved {
+  border: 1px solid #334155;
+  border-radius: 8px;
+  background: #111827;
+  color: #cbd5e1;
+  padding: 18px;
 }
 
 .player-shell {
@@ -825,6 +917,23 @@ img {
   .toolbar-row {
     -ms-flex-wrap: wrap;
         flex-wrap: wrap;
+  }
+
+  .player-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .player-title {
+    width: 100%;
+    order: 3;
+  }
+
+  .save-player-button {
+    margin-left: 0;
+  }
+
+  .user-bar {
+    align-items: flex-start;
   }
 
   .toolbar-row > * + * {

@@ -1,4 +1,4 @@
-import type { Genre, Media, Movie, SearchResponse, TvShow } from "@/components/page/types";
+import type { Genre, Media, Movie, MovieDetails, SearchResponse, TVDetails, TvShow } from "@/components/page/types";
 import { useEffect, useState } from "react";
 import { getBackendUrl } from "./backendUrl";
 
@@ -135,6 +135,83 @@ export function useFetchGenres(genreIds: number[], mediaType: string) {
   }, [genreIds, mediaType]);
 
   return genres;
+}
+
+export function useFetchMediaDetails(id: string, type: string) {
+  const [media, setMedia] = useState<Media | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchDetails = async () => {
+      setLoading(true);
+      setError('');
+
+      try {
+        const mediaType = type === 'tv' ? 'tv' : 'movie';
+        const response = await fetch(`${backend}/api/details/${mediaType}/${id}`);
+
+        if (!response.ok) {
+          throw new Error('Failed to load media details');
+        }
+
+        const data: MovieDetails | TVDetails = await response.json();
+        const genreIds = data.genres?.map((genre) => genre.id) || [];
+
+        if (mediaType === 'movie') {
+          const movie = data as MovieDetails;
+          setMedia({
+            id: movie.id,
+            adult: movie.adult,
+            genre_ids: genreIds,
+            original_language: movie.original_language,
+            overview: movie.overview,
+            popularity: movie.popularity,
+            poster_path: movie.poster_path,
+            backdrop_path: movie.backdrop_path,
+            vote_average: movie.vote_average,
+            vote_count: movie.vote_count,
+            video: movie.video,
+            media_type: 'movie',
+            original_title: movie.original_title,
+            release_date: movie.release_date,
+            title: movie.title,
+          });
+        } else {
+          const tv = data as TVDetails;
+          setMedia({
+            id: tv.id,
+            adult: tv.adult,
+            genre_ids: genreIds,
+            original_language: tv.original_language,
+            overview: tv.overview,
+            popularity: tv.popularity,
+            poster_path: tv.poster_path,
+            backdrop_path: tv.backdrop_path,
+            vote_average: tv.vote_average,
+            vote_count: tv.vote_count,
+            video: false,
+            media_type: 'tv',
+            original_name: tv.original_name,
+            first_air_date: tv.first_air_date,
+            name: tv.name,
+          });
+        }
+      } catch (err) {
+        setMedia(null);
+        setError('Failed to load media details. Please try again.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchDetails();
+    }
+  }, [id, type]);
+
+  return { media, loading, error };
 }
 
 

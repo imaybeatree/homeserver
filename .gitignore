@@ -3,6 +3,7 @@ backend/node_modules
 
 backend/dist
 homeapp/dist
+backend/data
 
 *.log
 npm-debug.log*

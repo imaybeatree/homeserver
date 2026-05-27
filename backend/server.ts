@@ -2,8 +2,9 @@ import { fileURLToPath } from "url";
 import express from "express";
 import cors from 'cors';
 import path from "path";
-import { fetchMovieHandler, searchMoviesHandler, popularMoviesHandler, movieGenresHandler } from "./handlers/movie.handlers";
+import { fetchMovieHandler, searchMoviesHandler, popularMoviesHandler, movieGenresHandler, movieDetailsHandler } from "./handlers/movie.handlers";
 import { fetchTvShowHandler, popularTvShowsHandler, searchTvShowsHandler, tvDetailsHandler, tvEpisodeHandler, tvEpisodesHandler, tvGenresHandler } from "./handlers/tv.handlers";
+import { removeSavedShowHandler, savedShowsHandler, saveShowHandler } from "./handlers/savedShows.handlers";
 import { networkInterfaces } from 'os';
 
 function getLocalIpAddress(): string {
@@ -54,6 +55,7 @@ app.use(cors({
   credentials: true
 }));
 
+app.use(express.json({ limit: "1mb" }));
 
 app.get("/api/movie/:id", fetchMovieHandler);
 app.get("/api/search/movie/:name/:page", searchMoviesHandler);
@@ -63,9 +65,13 @@ app.get("/api/search/tv/:name/:page", searchTvShowsHandler);
 app.get("/api/popular/tv", popularTvShowsHandler);
 app.get("/api/genre/movie", movieGenresHandler)
 app.get("/api/genre/tv", tvGenresHandler)
+app.get("/api/details/movie/:id",movieDetailsHandler)
 app.get("/api/details/tv/:id",tvDetailsHandler)
 app.get("/api/episode/:id/:season/:episode", tvEpisodeHandler)
 app.get("/api/episodes/:id/:season", tvEpisodesHandler)
+app.get("/api/users/:userId/saved-shows", savedShowsHandler)
+app.post("/api/users/:userId/saved-shows", saveShowHandler)
+app.delete("/api/users/:userId/saved-shows/:mediaType/:mediaId", removeSavedShowHandler)
 
 const WEB_DIST = path.resolve(__dirname, "../../homeapp/dist");
 

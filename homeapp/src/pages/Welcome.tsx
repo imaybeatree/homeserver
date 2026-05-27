@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, ArrowRight, Lock } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Sparkles, UserRound } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Navigate } from 'react-router-dom';
+import { FAMILY_USERS, type FamilyUser } from '@/hooks/use-saved-shows';
 
 interface Ball {
   id: number;
@@ -21,7 +20,7 @@ interface WelcomePageProps {
 }
 
 const WelcomePage: React.FC<WelcomePageProps> = ({ onAuthenticated }) => {
-  const [password, setPassword] = useState<string>('');
+  const [selectedUser, setSelectedUser] = useState<FamilyUser | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [balls, setBalls] = useState<Ball[]>([]);
@@ -65,32 +64,17 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onAuthenticated }) => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleSubmit = () => {
+  const handleUserSelect = (user: FamilyUser) => {
     setError('');
-    
-    // if (!name.trim()) {
-    //   setError('Please enter your name');
-    //   return;
-    // }
-    
-    if (!password.trim()) {
-      setError('Please enter a password');
-      return;
-    }
-    
+    setSelectedUser(user);
 
-    if (password === '123') {
-      setSubmitted(true);
-      
+    setSubmitted(true);
 
-      sessionStorage.setItem('isAuthenticated', 'true');
-      // sessionStorage.setItem('userName', name);
-      
-      if (onAuthenticated) {
-        setTimeout(() => onAuthenticated(), 2000);
-      }
-    } else {
-      setError('Incorrect password');
+    sessionStorage.setItem('isAuthenticated', 'true');
+    sessionStorage.setItem('currentUser', user);
+    
+    if (onAuthenticated) {
+      setTimeout(() => onAuthenticated(), 2000);
     }
   };
 
@@ -121,7 +105,7 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onAuthenticated }) => {
             </CardTitle>
             <CardDescription className="welcome-desc">
               {!submitted 
-                ? "Type the ting"
+                ? "Pick your profile"
                 : "donezos"}
             </CardDescription>
           </CardHeader>
@@ -129,54 +113,34 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onAuthenticated }) => {
           <CardContent>
             {!submitted ? (
               <div className="form-stack">
-                {/* <div className="space-y-2">
-                  <Label>Name</Label>
-                  <Input
-                    id="name"
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter your name"
-                    onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-                  />
-                </div> */}
-                
                 <div>
-                  <Label>The ting</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="type here"
-                    onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-                  />
+                  <Label>Who's watching?</Label>
+                  <div className="user-grid">
+                    {FAMILY_USERS.map((user) => (
+                      <button
+                        key={user}
+                        type="button"
+                        className={`user-choice${selectedUser === user ? ' user-choice-active' : ''}`}
+                        onClick={() => handleUserSelect(user)}
+                      >
+                        <UserRound />
+                        <span>{user}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                
+
                 {error && (
                   <div className="error-box">
                     {error}
                   </div>
                 )}
-                
-                <Button
-                  onClick={handleSubmit}
-                  disabled={!password.trim()}
-                  className="tv-button-wide"
-                >
-                  <Lock />
-                  Sign In
-                  <ArrowRight />
-                </Button>
 
               </div>
             ) : (<Navigate to="/main" replace />)}
           </CardContent>
         </Card>
-        
-        <p className="welcome-note">
-          yea i vibe coded the balls xd
-        </p>
+      
       </div>
     </div>
   );
