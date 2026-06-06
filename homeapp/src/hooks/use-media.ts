@@ -244,9 +244,9 @@ export function useFetchPlayer(id: string, type: string, season: string | null, 
 
                 }else {
                   if (type === 'movie'){
-                    html = `https://vidlink.pro/movie/${id}`
+                    html = `https://111movies.net/movie/${id}`
                   } else{
-                    html = `https://vidlink.pro/tv/${id}/${season}/${episode}`
+                    html = `https://111movies.net/tv/${id}/${season}/${episode}`
                   }
                 }
 

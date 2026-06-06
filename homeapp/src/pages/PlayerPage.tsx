@@ -18,7 +18,7 @@ interface PlayerPageProps {
 const PlayerPage: React.FC<PlayerPageProps> = ({ id, type, season: initialSeason, episode: initialEpisode, onBack }) => {
   const [season, setSeason] = useState<string>(initialSeason);
   const [episode, setEpisode] = useState<string>(initialEpisode);
-  const [source, setSource] = useState<string>('main');
+  const [source, setSource] = useState<string>('backup');
   const [currentUser] = useState(getCurrentUser());
   const [saveError, setSaveError] = useState('');
 
@@ -87,8 +87,8 @@ const PlayerPage: React.FC<PlayerPageProps> = ({ id, type, season: initialSeason
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="main">Main player</SelectItem>
-                    <SelectItem value="backup">Backup player</SelectItem>
+                    <SelectItem value="backup">Main player</SelectItem>
+                    {/* <SelectItem value="backup">Backup player</SelectItem> */}
                   </SelectGroup>
                 </SelectContent>
               </Select>
