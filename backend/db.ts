@@ -24,3 +24,6 @@ db.exec(`
     UNIQUE(user_id, media_id, media_type)
   );
 `);
+
+try { db.exec(`ALTER TABLE saved_shows ADD COLUMN last_season TEXT`); } catch {}
+try { db.exec(`ALTER TABLE saved_shows ADD COLUMN last_episode TEXT`); } catch {}

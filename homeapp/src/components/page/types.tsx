@@ -94,6 +94,8 @@ export interface TvShow extends MediaBase {
   original_name: string;
   first_air_date: string;
   name: string;
+  last_season?: string;
+  last_episode?: string;
 }
 
 export type Media = Movie | TvShow;

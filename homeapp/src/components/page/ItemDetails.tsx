@@ -45,7 +45,16 @@ export const ItemDetails: React.FC<ItemDetailsProps> = ({ media }) => {
       <div className="details-action">
         <Button
           className="tv-button-wide tv-button-large"
-          onClick={() => navigate(`/watch/${media.media_type}/${media.id}`)}
+          onClick={() => {
+            if (media.media_type === 'tv') {
+              navigate(media.last_season
+                ? `/watch/tv/${media.id}/${media.last_season}/${media.last_episode || '1'}`
+                : `/watch/tv/${media.id}`
+              );
+            } else {
+              navigate(`/watch/${media.media_type}/${media.id}`);
+            }
+          }}
         >
           Watch
         </Button>

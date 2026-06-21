@@ -254,7 +254,11 @@ const MainPage: React.FC = () => {
           ) : savedShowsError ? (
             <div className="empty-saved">{savedShowsError}</div>
           ) : savedShows.length > 0 ? (
-            <PopularShows media={savedShows} handleMovieClick={handleMediaClick} />
+            <PopularShows
+              media={savedShows}
+              handleMovieClick={handleMediaClick}
+              getProgress={(m: Media) => m.media_type === 'tv' && m.last_season ? { season: m.last_season, episode: m.last_episode || '1' } : null}
+            />
           ) : (
             <div className="empty-saved">Save movies and TV shows to see them here.</div>
           )}

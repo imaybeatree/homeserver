@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Bookmark, BookmarkCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useFetchMediaDetails, useFetchPlayer } from '@/hooks/use-media';
@@ -6,6 +7,7 @@ import ShowSelect from '@/components/page/ShowSelect';
 import { Spinner } from '@/components/ui/spinner';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getCurrentUser, useSavedShows } from '@/hooks/use-saved-shows';
+import { setWatchProgress } from '@/hooks/use-watch-progress';
 
 interface PlayerPageProps {
   id: string;
@@ -15,9 +17,8 @@ interface PlayerPageProps {
   onBack?: () => void;
 }
 
-const PlayerPage: React.FC<PlayerPageProps> = ({ id, type, season: initialSeason, episode: initialEpisode, onBack }) => {
-  const [season, setSeason] = useState<string>(initialSeason);
-  const [episode, setEpisode] = useState<string>(initialEpisode);
+const PlayerPage: React.FC<PlayerPageProps> = ({ id, type, season, episode, onBack }) => {
+  const navigate = useNavigate();
   const [source, setSource] = useState<string>('backup');
   const [currentUser] = useState(getCurrentUser());
   const [saveError, setSaveError] = useState('');
@@ -36,9 +37,9 @@ const PlayerPage: React.FC<PlayerPageProps> = ({ id, type, season: initialSeason
     }
   };
 
-  const handleSeasonChange = (season: string) => {
-    setSeason(season)
-    setEpisode("1")
+  const handleSeasonChange = (newSeason: string) => {
+    if (currentUser && isSaved(media)) setWatchProgress(currentUser, id, type, newSeason, "1");
+    navigate(`/watch/${type}/${id}/${newSeason}/1`);
   }
 
   const handleToggleSaved = async () => {
@@ -157,7 +158,10 @@ const PlayerPage: React.FC<PlayerPageProps> = ({ id, type, season: initialSeason
               season={season}
               episode={episode}
               onSeasonChange={handleSeasonChange}
-              onEpisodeChange={setEpisode}
+              onEpisodeChange={(ep) => {
+                if (currentUser && isSaved(media)) setWatchProgress(currentUser, id, type, season, ep);
+                navigate(`/watch/${type}/${id}/${season}/${ep}`);
+              }}
             />
           </div>)}
 

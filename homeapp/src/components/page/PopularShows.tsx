@@ -7,9 +7,10 @@ import type { Media } from "./types"
 interface PopularShowsProps {
   media: Media[];
   handleMovieClick: (media: Media) => void;
+  getProgress?: (media: Media) => { season: string; episode: string } | null;
 }
 
-export const PopularShows: React.FC<PopularShowsProps> = ({ media, handleMovieClick }) => {
+export const PopularShows: React.FC<PopularShowsProps> = ({ media, handleMovieClick, getProgress }) => {
 
     const isMobile = useIsMobile()
 
@@ -28,10 +29,11 @@ export const PopularShows: React.FC<PopularShowsProps> = ({ media, handleMovieCl
                   <CarouselItem key={media.id}>
                     <div>
                         <CardContent className="carousel-card-pad">
-                            <PosterCard 
+                            <PosterCard
                               key={media.id}
                               media={media}
                               onClick={handleMovieClick}
+                              progress={getProgress ? getProgress(media) : null}
                                />
                         </CardContent>
 

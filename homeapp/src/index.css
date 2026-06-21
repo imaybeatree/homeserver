@@ -394,6 +394,13 @@ img {
   font-size: 14px;
 }
 
+.poster-progress {
+  margin: 4px 0 0;
+  color: #a78bfa;
+  font-size: 12px;
+  font-weight: 600;
+}
+
 .section {
   padding: 40px 0;
 }

@@ -4,7 +4,7 @@ import cors from 'cors';
 import path from "path";
 import { fetchMovieHandler, searchMoviesHandler, popularMoviesHandler, movieGenresHandler, movieDetailsHandler } from "./handlers/movie.handlers";
 import { fetchTvShowHandler, popularTvShowsHandler, searchTvShowsHandler, tvDetailsHandler, tvEpisodeHandler, tvEpisodesHandler, tvGenresHandler } from "./handlers/tv.handlers";
-import { removeSavedShowHandler, savedShowsHandler, saveShowHandler } from "./handlers/savedShows.handlers";
+import { removeSavedShowHandler, savedShowsHandler, saveShowHandler, updateProgressHandler } from "./handlers/savedShows.handlers";
 import { networkInterfaces } from 'os';
 
 function getLocalIpAddress(): string {
@@ -72,6 +72,7 @@ app.get("/api/episodes/:id/:season", tvEpisodesHandler)
 app.get("/api/users/:userId/saved-shows", savedShowsHandler)
 app.post("/api/users/:userId/saved-shows", saveShowHandler)
 app.delete("/api/users/:userId/saved-shows/:mediaType/:mediaId", removeSavedShowHandler)
+app.patch("/api/users/:userId/saved-shows/:mediaType/:mediaId/progress", updateProgressHandler)
 
 const WEB_DIST = path.resolve(__dirname, "../../homeapp/dist");
 

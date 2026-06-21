@@ -14,7 +14,9 @@ const savedShowsQuery = db.prepare(`
     backdrop_path,
     genre_ids,
     release_date,
-    first_air_date
+    first_air_date,
+    last_season,
+    last_episode
   FROM saved_shows
   WHERE user_id = ?
   ORDER BY datetime(created_at) DESC
@@ -54,6 +56,12 @@ const removeShowQuery = db.prepare(`
   WHERE user_id = ? AND media_id = ? AND media_type = ?
 `);
 
+const updateProgressQuery = db.prepare(`
+  UPDATE saved_shows
+  SET last_season = ?, last_episode = ?
+  WHERE user_id = ? AND media_id = ? AND media_type = ?
+`);
+
 type SavedShowRow = {
   media_id: number;
   media_type: "movie" | "tv";
@@ -64,6 +72,8 @@ type SavedShowRow = {
   genre_ids: string;
   release_date: string | null;
   first_air_date: string | null;
+  last_season: string | null;
+  last_episode: string | null;
 };
 
 function isValidUser(userId: string) {
@@ -110,6 +120,8 @@ function formatSavedShow(row: SavedShowRow) {
     original_name: row.title,
     first_air_date: row.first_air_date || "",
     name: row.title,
+    last_season: row.last_season ?? undefined,
+    last_episode: row.last_episode ?? undefined,
   };
 }
 
@@ -191,3 +203,29 @@ export const removeSavedShowHandler = authenticated(async (req, res) => {
 export function isShowSaved(userId: string, mediaId: number, mediaType: string) {
   return Boolean(isSavedQuery.get(userId, mediaId, mediaType));
 }
+
+export const updateProgressHandler = authenticated(async (req, res) => {
+  const { userId, mediaType, mediaId } = req.params;
+  if (!userId || !mediaType || !mediaId) {
+    return res.status(400).json({ error: "Missing params" });
+  }
+
+  const normalizedUserId = userId.toLowerCase();
+  const parsedMediaId = Number(mediaId);
+
+  if (!isValidUser(normalizedUserId)) {
+    return res.status(400).json({ error: "Unknown user" });
+  }
+
+  if (!MEDIA_TYPES.has(mediaType) || !Number.isInteger(parsedMediaId)) {
+    return res.status(400).json({ error: "Invalid media" });
+  }
+
+  const { season, episode } = req.body;
+  if (typeof season !== "string" || typeof episode !== "string") {
+    return res.status(400).json({ error: "Invalid season or episode" });
+  }
+
+  updateProgressQuery.run(season, episode, normalizedUserId, parsedMediaId, mediaType);
+  res.json({ updated: true });
+});

@@ -6,9 +6,10 @@ import { useFetchGenres } from '@/hooks/use-media';
 interface PosterCardProps {
   media: Media;
   onClick?: (media: Media) => void;
+  progress?: { season: string; episode: string } | null;
 }
 
-export const PosterCard: React.FC<PosterCardProps> = ({ media, onClick }) => {
+export const PosterCard: React.FC<PosterCardProps> = ({ media, onClick, progress }) => {
   const genres = useFetchGenres(media.genre_ids, media.media_type)
   if (!media) return
 
@@ -65,6 +66,9 @@ export const PosterCard: React.FC<PosterCardProps> = ({ media, onClick }) => {
           {media.media_type === "movie" ? media.title : media.name}
         </h3>
         <p className="poster-year">{year}</p>
+        {progress && (
+          <p className="poster-progress">S{progress.season} · E{progress.episode}</p>
+        )}
       </div>
     </div>
   );
