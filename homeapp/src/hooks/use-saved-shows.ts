@@ -67,8 +67,8 @@ export function useSavedShows(userId: FamilyUser | null) {
     async (media: Media) => {
       if (!userId) return;
 
-      const response = await fetch(
-        `${backend}/api/users/${userId}/saved-shows/${media.media_type}/${media.id}`,
+      const response = await apiFetch(
+        `/api/users/${userId}/saved-shows/${media.media_type}/${media.id}`,
         { method: "DELETE" },
       );
 

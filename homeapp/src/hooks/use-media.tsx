@@ -1,5 +1,6 @@
 import type { Genre, Media, Movie, MovieDetails, SearchResponse, TVDetails, TvShow } from "@/components/page/types";
-import { useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import type { ReactNode } from "react";
 import { apiFetch } from "./apiFetch";
 
 
@@ -97,40 +98,49 @@ export function useSearchPopular(type: string) {
     if (type) {
         fetchPopular();
     }
-    }, [popular.length, type]);
+    }, [type]);
 
     return { isLoading, popular }
 }
 
 
-export function useFetchGenres(genreIds: number[], mediaType: string) {
-  const [genres, setGenres] = useState<string[]>([]);
+interface GenreContextValue {
+  lookupGenres: (ids: number[], mediaType: string) => string[];
+}
+
+const GenreContext = createContext<GenreContextValue>({ lookupGenres: () => [] });
+
+export function useGenres() {
+  return useContext(GenreContext);
+}
+
+export function GenreProvider({ children }: { children: ReactNode }) {
+  const [tvMap, setTvMap] = useState<Map<number, string>>(new Map());
+  const [movieMap, setMovieMap] = useState<Map<number, string>>(new Map());
 
   useEffect(() => {
-    if (!genreIds || genreIds.length === 0) {
-      setGenres([]);
-      return;
-    }
+    apiFetch('/api/genre/tv')
+      .then((r) => r.json())
+      .then((data) => setTvMap(new Map((data.genres as Genre[]).map((g) => [g.id, g.name]))))
+      .catch(() => {});
+  }, []);
 
-    const fetchGenres = async () => {
-      try {
-        const res = await apiFetch(`/api/genre/${mediaType}`);
-        const data = await res.json();
-        const genres: Genre[] = data.genres
+  useEffect(() => {
+    apiFetch('/api/genre/movie')
+      .then((r) => r.json())
+      .then((data) => setMovieMap(new Map((data.genres as Genre[]).map((g) => [g.id, g.name]))))
+      .catch(() => {});
+  }, []);
 
-        const genreMap = new Map(genres.map((g) => [g.id, g.name]));
-        const genreNames = genreIds.map((id) => genreMap.get(id) || "Unknown");
-        setGenres(genreNames);
-      } catch (err) {
-        console.error(err);
-        setGenres([]);
-      }
-    };
+  const lookupGenres = useCallback(
+    (ids: number[], mediaType: string) => {
+      const map = mediaType === 'tv' ? tvMap : movieMap;
+      return ids.map((id) => map.get(id) ?? 'Unknown');
+    },
+    [tvMap, movieMap],
+  );
 
-    fetchGenres();
-  }, [genreIds, mediaType]);
-
-  return genres;
+  return <GenreContext.Provider value={{ lookupGenres }}>{children}</GenreContext.Provider>;
 }
 
 export function useFetchMediaDetails(id: string, type: string) {

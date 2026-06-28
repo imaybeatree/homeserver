@@ -1,7 +1,7 @@
 import React from 'react';
 import missingImage from '@/assets/missing_image.png';
 import type { Media } from './types';
-import { useFetchGenres } from '@/hooks/use-media';
+import { useGenres } from '@/hooks/use-media';
 
 interface PosterCardProps {
   media: Media;
@@ -10,7 +10,8 @@ interface PosterCardProps {
 }
 
 export const PosterCard: React.FC<PosterCardProps> = ({ media, onClick, progress }) => {
-  const genres = useFetchGenres(media.genre_ids, media.media_type)
+  const { lookupGenres } = useGenres();
+  const genres = lookupGenres(media.genre_ids, media.media_type);
   if (!media) return
 
   const imageBaseUrl = 'https://image.tmdb.org/t/p/';

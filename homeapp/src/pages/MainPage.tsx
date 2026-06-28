@@ -21,7 +21,7 @@ import {
 import { Spinner } from '@/components/ui/spinner';
 import type { Media} from '@/components/page/types';
 import { PopularShows } from '@/components/page/PopularShows';
-import { useSearchMedia, useSearchPopular } from '@/hooks/use-media';
+import { GenreProvider, useSearchMedia, useSearchPopular } from '@/hooks/use-media';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getCurrentUser, useSavedShows } from '@/hooks/use-saved-shows';
 import { useNavigate } from 'react-router-dom';
@@ -95,6 +95,7 @@ const MainPage: React.FC = () => {
   };
 
   return (
+    <GenreProvider>
     <div className="app-shell">
       {/* Header with Search Bar */}
       <div className="top-bar">
@@ -301,6 +302,7 @@ const MainPage: React.FC = () => {
 
       </div>
     </div>
+    </GenreProvider>
   );
 };
 

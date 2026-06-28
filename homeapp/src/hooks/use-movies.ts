@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import { getBackendUrl } from "./backendUrl";
-
-const backend = getBackendUrl();
+import { apiFetch } from "./apiFetch";
 
 export function useFetchMoviePlayer(id: string){
     const [playerHtml, setPlayerHtml] = useState<string>('');
@@ -14,7 +12,7 @@ export function useFetchMoviePlayer(id: string){
         setError('');
 
         try {
-        const response = await fetch(`${backend}/api/movie/${id}`);
+        const response = await apiFetch(`/api/movie/${id}`);
         
         if (!response.ok) {
             throw new Error('Failed to load player');
