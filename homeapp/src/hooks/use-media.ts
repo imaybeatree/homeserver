@@ -1,8 +1,6 @@
 import type { Genre, Media, Movie, MovieDetails, SearchResponse, TVDetails, TvShow } from "@/components/page/types";
 import { useEffect, useState } from "react";
-import { getBackendUrl } from "./backendUrl";
-
-const backend = getBackendUrl();
+import { apiFetch } from "./apiFetch";
 
 
 function formatType(media :Media[], type: string){
@@ -47,9 +45,7 @@ export function useSearchMedia(query: string, page: number, type: string) {
       setError(null);
 
       try {
-        const response = await fetch(
-          `${backend}/api/search/${type}/${query}/${page}`
-        );
+        const response = await apiFetch(`/api/search/${type}/${query}/${page}`);
 
         if (!response.ok) {
           throw new Error(`Failed to fetch ${type}`);
@@ -84,7 +80,7 @@ export function useSearchPopular(type: string) {
     setIsLoading(true);
     const fetchPopular = async () => {
         try {
-        const response = await fetch(`${backend}/api/popular/${type}`);
+        const response = await apiFetch(`/api/popular/${type}`);
         if (!response.ok) throw new Error(`Failed to fetch popular ${type}`);
 
         const data: SearchResponse = await response.json();
@@ -118,7 +114,7 @@ export function useFetchGenres(genreIds: number[], mediaType: string) {
 
     const fetchGenres = async () => {
       try {
-        const res = await fetch(`${backend}/api/genre/${mediaType}`);
+        const res = await apiFetch(`/api/genre/${mediaType}`);
         const data = await res.json();
         const genres: Genre[] = data.genres
 
@@ -149,7 +145,7 @@ export function useFetchMediaDetails(id: string, type: string) {
 
       try {
         const mediaType = type === 'tv' ? 'tv' : 'movie';
-        const response = await fetch(`${backend}/api/details/${mediaType}/${id}`);
+        const response = await apiFetch(`/api/details/${mediaType}/${id}`);
 
         if (!response.ok) {
           throw new Error('Failed to load media details');
@@ -231,9 +227,9 @@ export function useFetchPlayer(id: string, type: string, season: string | null, 
 
                 if(source == 'main'){
                                     if (type === 'movie'){
-                      response = await fetch(`${backend}/api/movie/${id}`);
+                      response = await apiFetch(`/api/movie/${id}`);
                   } else {
-                      response = await fetch(`${backend}/api/tv/${id}/${season}/${episode}`);
+                      response = await apiFetch(`/api/tv/${id}/${season}/${episode}`);
                   }
                   
                   if (!response.ok) {

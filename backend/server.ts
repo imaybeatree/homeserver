@@ -5,6 +5,9 @@ import path from "path";
 import { fetchMovieHandler, searchMoviesHandler, popularMoviesHandler, movieGenresHandler, movieDetailsHandler } from "./handlers/movie.handlers";
 import { fetchTvShowHandler, popularTvShowsHandler, searchTvShowsHandler, tvDetailsHandler, tvEpisodeHandler, tvEpisodesHandler, tvGenresHandler } from "./handlers/tv.handlers";
 import { removeSavedShowHandler, savedShowsHandler, saveShowHandler, updateProgressHandler } from "./handlers/savedShows.handlers";
+import { loginHandler, meHandler, selectUserHandler, seedPassword } from "./handlers/auth.handlers";
+import { verifyToken } from "./middleware/auth.middleware";
+import { requestLogger } from "./middleware/request-logger.middleware";
 import { networkInterfaces } from 'os';
 
 function getLocalIpAddress(): string {
@@ -39,6 +42,8 @@ const IP = getLocalIpAddress();
 // app.use("/files", express.static(FILE_DIR));
 // app.use("/files", express.static(FILE_DIR));
 
+seedPassword();
+
 const server = app.listen(PORT, '0.0.0.0');
 
 server.on("error", (error) => {
@@ -47,15 +52,17 @@ server.on("error", (error) => {
 
 app.use(cors({
   origin: [
-    "http://localhost:5173",   
+    "http://localhost:5173",
     `http:/${IP}/:5173`,
     "http://192.168.68.61:5173",
     "http://hehexdpc.local:5173"
   ],
-  credentials: true
+  credentials: true,
+  exposedHeaders: ['X-Refresh-Token'],
 }));
 
 app.use(express.json({ limit: "1mb" }));
+app.use(requestLogger);
 
 app.get("/api/movie/:id", fetchMovieHandler);
 app.get("/api/search/movie/:name/:page", searchMoviesHandler);
@@ -69,6 +76,14 @@ app.get("/api/details/movie/:id",movieDetailsHandler)
 app.get("/api/details/tv/:id",tvDetailsHandler)
 app.get("/api/episode/:id/:season/:episode", tvEpisodeHandler)
 app.get("/api/episodes/:id/:season", tvEpisodesHandler)
+// Public — no token required
+app.post("/api/auth/login", loginHandler)
+
+// All routes below this line require a valid JWT
+app.use('/api', verifyToken)
+
+app.get("/api/auth/me", meHandler)
+app.post("/api/auth/select-user", selectUserHandler)
 app.get("/api/users/:userId/saved-shows", savedShowsHandler)
 app.post("/api/users/:userId/saved-shows", saveShowHandler)
 app.delete("/api/users/:userId/saved-shows/:mediaType/:mediaId", removeSavedShowHandler)

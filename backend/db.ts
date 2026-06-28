@@ -27,3 +27,10 @@ db.exec(`
 
 try { db.exec(`ALTER TABLE saved_shows ADD COLUMN last_season TEXT`); } catch {}
 try { db.exec(`ALTER TABLE saved_shows ADD COLUMN last_episode TEXT`); } catch {}
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS app_config (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+  );
+`);

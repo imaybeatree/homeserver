@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Sparkles, UserRound } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FAMILY_USERS, type FamilyUser } from '@/hooks/use-saved-shows';
+import { apiFetch, setToken } from '@/hooks/apiFetch';
 
 interface Ball {
   id: number;
@@ -20,8 +21,8 @@ interface WelcomePageProps {
 }
 
 const WelcomePage: React.FC<WelcomePageProps> = ({ onAuthenticated }) => {
+  const navigate = useNavigate();
   const [selectedUser, setSelectedUser] = useState<FamilyUser | null>(null);
-  const [submitted, setSubmitted] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [balls, setBalls] = useState<Ball[]>([]);
 
@@ -64,17 +65,27 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onAuthenticated }) => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleUserSelect = (user: FamilyUser) => {
+  const handleUserSelect = async (user: FamilyUser) => {
     setError('');
     setSelectedUser(user);
-
-    setSubmitted(true);
-
-    sessionStorage.setItem('isAuthenticated', 'true');
-    sessionStorage.setItem('currentUser', user);
-    
-    if (onAuthenticated) {
-      setTimeout(() => onAuthenticated(), 2000);
+    try {
+      const res = await apiFetch('/api/auth/select-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? 'Failed to select user.');
+        setSelectedUser(null);
+        return;
+      }
+      setToken(data.token);
+      if (onAuthenticated) onAuthenticated();
+      navigate('/main', { replace: true });
+    } catch {
+      setError('Could not reach the server.');
+      setSelectedUser(null);
     }
   };
 
@@ -104,40 +115,31 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onAuthenticated }) => {
               Ni Hao
             </CardTitle>
             <CardDescription className="welcome-desc">
-              {!submitted 
-                ? "Pick your profile"
-                : "donezos"}
+              Pick your profile
             </CardDescription>
           </CardHeader>
           
           <CardContent>
-            {!submitted ? (
-              <div className="form-stack">
-                <div>
-                  <Label>Who's watching?</Label>
-                  <div className="user-grid">
-                    {FAMILY_USERS.map((user) => (
-                      <button
-                        key={user}
-                        type="button"
-                        className={`user-choice${selectedUser === user ? ' user-choice-active' : ''}`}
-                        onClick={() => handleUserSelect(user)}
-                      >
-                        <UserRound />
-                        <span>{user}</span>
-                      </button>
-                    ))}
-                  </div>
+            <div className="form-stack">
+              <div>
+                <Label>Who's watching?</Label>
+                <div className="user-grid">
+                  {FAMILY_USERS.map((user) => (
+                    <button
+                      key={user}
+                      type="button"
+                      className={`user-choice${selectedUser === user ? ' user-choice-active' : ''}`}
+                      onClick={() => handleUserSelect(user)}
+                      disabled={selectedUser !== null}
+                    >
+                      <UserRound />
+                      <span>{user}</span>
+                    </button>
+                  ))}
                 </div>
-
-                {error && (
-                  <div className="error-box">
-                    {error}
-                  </div>
-                )}
-
               </div>
-            ) : (<Navigate to="/main" replace />)}
+              {error && <div className="error-box">{error}</div>}
+            </div>
           </CardContent>
         </Card>
       

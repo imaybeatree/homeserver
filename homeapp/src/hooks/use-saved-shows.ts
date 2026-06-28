@@ -1,14 +1,12 @@
 import type { Media } from "@/components/page/types";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { getBackendUrl } from "./backendUrl";
-
-const backend = getBackendUrl();
+import { apiFetch, getUserFromToken } from "./apiFetch";
 
 export const FAMILY_USERS = ["mom", "dad", "ryan", "chloe"] as const;
 export type FamilyUser = (typeof FAMILY_USERS)[number];
 
 export function getCurrentUser(): FamilyUser | null {
-  const user = sessionStorage.getItem("currentUser");
+  const user = getUserFromToken();
   return FAMILY_USERS.includes(user as FamilyUser) ? (user as FamilyUser) : null;
 }
 
@@ -32,7 +30,7 @@ export function useSavedShows(userId: FamilyUser | null) {
     setError(null);
 
     try {
-      const response = await fetch(`${backend}/api/users/${userId}/saved-shows`);
+      const response = await apiFetch(`/api/users/${userId}/saved-shows`);
       if (!response.ok) throw new Error("Failed to load saved shows");
 
       const data: { results: Media[] } = await response.json();
@@ -53,7 +51,7 @@ export function useSavedShows(userId: FamilyUser | null) {
     async (media: Media) => {
       if (!userId) return;
 
-      const response = await fetch(`${backend}/api/users/${userId}/saved-shows`, {
+      const response = await apiFetch(`/api/users/${userId}/saved-shows`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(media),

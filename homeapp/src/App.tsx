@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, useParams, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useParams, useNavigate, Navigate } from 'react-router-dom';
+import AccessPage from './pages/AccessPage';
 import WelcomePage from './pages/Welcome';
 import { ProtectedRoute } from './components/page/ProtectedRoute';
 import MainPage from './pages/MainPage';
@@ -28,18 +29,25 @@ function PlayerPageWrapper() {
   );
 }
 
+function SelectRoute() {
+  return sessionStorage.getItem('appUnlocked') === 'true'
+    ? <WelcomePage />
+    : <Navigate to="/" replace />;
+}
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<WelcomePage />} />
-        <Route 
-          path="/main" 
+        <Route path="/" element={<AccessPage />} />
+        <Route path="/select" element={<SelectRoute />} />
+        <Route
+          path="/main"
           element={
             <ProtectedRoute>
               <MainPage />
             </ProtectedRoute>
-          } 
+          }
         />
         <Route 
           path="/watch/:type/:id" 

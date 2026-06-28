@@ -1,8 +1,6 @@
 import type { Episode, TVDetails } from "@/components/page/types";
 import { useEffect, useState } from "react";
-import { getBackendUrl } from "./backendUrl";
-
-const backend = getBackendUrl();
+import { apiFetch } from "./apiFetch";
 
 export function useFetchTvDetails(id: string){
     const [tvDetails, setTvDetails] = useState<TVDetails>();
@@ -15,7 +13,7 @@ export function useFetchTvDetails(id: string){
         setError('');
 
         try {
-        const response = await fetch(`${backend}/api/details/tv/${id}`);
+        const response = await apiFetch(`/api/details/tv/${id}`);
         
         if (!response.ok) {
             throw new Error('Failed to load details');
@@ -50,7 +48,7 @@ export function useFetchEpisodeDetails(id: string, season: string, episode: stri
         setError('');
 
         try {
-        const response = await fetch(`${backend}/api/episode/${id}/${season}/${episode}`);
+        const response = await apiFetch(`/api/episode/${id}/${season}/${episode}`);
         
         if (!response.ok) {
             throw new Error('Failed to load details');
@@ -86,7 +84,7 @@ export function useFetchSeasonEpisodes(id: string, season: string) {
 
       try {
 
-        const response = await fetch(`${backend}/api/episodes/${id}/${season}`);
+        const response = await apiFetch(`/api/episodes/${id}/${season}`);
         
         if (!response.ok) {
           throw new Error('Failed to load season details');

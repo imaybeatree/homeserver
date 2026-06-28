@@ -91,7 +91,7 @@ const MainPage: React.FC = () => {
   const handleSwitchUser = () => {
     sessionStorage.removeItem('isAuthenticated');
     sessionStorage.removeItem('currentUser');
-    navigate('/');
+    navigate('/select');
   };
 
   return (

@@ -1,6 +1,4 @@
-import { getBackendUrl } from './backendUrl';
-
-const backend = getBackendUrl();
+import { apiFetch } from './apiFetch';
 
 export async function setWatchProgress(
   userId: string,
@@ -10,7 +8,7 @@ export async function setWatchProgress(
   episode: string,
 ): Promise<void> {
   try {
-    await fetch(`${backend}/api/users/${userId}/saved-shows/${mediaType}/${mediaId}/progress`, {
+    await apiFetch(`/api/users/${userId}/saved-shows/${mediaType}/${mediaId}/progress`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ season, episode }),
