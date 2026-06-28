@@ -34,7 +34,8 @@ COPY --from=backend-prod-deps /app/backend/node_modules ./backend/node_modules
 COPY --from=build /app/backend/dist ./backend/dist
 COPY --from=build /app/homeapp/dist ./homeapp/dist
 
-RUN addgroup -S app && adduser -S app -G app
+RUN addgroup -S app && adduser -S app -G app \
+  && mkdir -p /app/data && chown -R app:app /app/data
 USER app
 
 EXPOSE 3000
